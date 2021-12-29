@@ -5,6 +5,7 @@ pub struct UsersRepositoryImpl {}
 // Mock repository
 impl UsersRepository for UsersRepositoryImpl {
     fn find(&self, id: String) -> User {
+        println!("find: user_id = {}", id);
         User {
             id,
             name: "mock_name".to_string(),
@@ -12,11 +13,17 @@ impl UsersRepository for UsersRepositoryImpl {
         }
     }
 
-    fn save(&self, user: User) {
+    fn save(&self, user: User) -> User {
         println!("save: user_id = {}, name = {}, age = {}", user.id, user.name, user.age);
+        user
     }
 
-    fn delete(&self, id: String) {
+    fn delete(&self, id: String) -> User {
         println!("delete: user_id = {}", id);
+        User {
+            id,
+            name: "mock_name".to_string(),
+            age: 20,
+        }
     }
 }

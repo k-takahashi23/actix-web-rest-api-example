@@ -29,7 +29,7 @@ impl Responder for CreateUserResponse {
 #[post("/users")]
 pub async fn create_user(request: web::Json<CreateUserRequest>) -> impl Responder {
     let users_repository = UsersRepositoryImpl {};
-    let user = User { id: "mock_id".to_string(), name: request.name.clone(), age: request.age };
-    users_repository.save(user);
-    CreateUserResponse{ id: "mock_id".to_string(), name: request.name.clone(), age: request.age }
+    let user = User::new(request.name.clone(), request.age );
+    let saved_user = users_repository.save(user);
+    CreateUserResponse{ id: saved_user.id, name: saved_user.name, age: saved_user.age }
 }
