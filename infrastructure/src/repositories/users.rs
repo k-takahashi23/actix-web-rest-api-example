@@ -7,7 +7,7 @@ impl UsersRepository for UsersRepositoryImpl {
     fn find(&self, id: String) -> User {
         User {
             id,
-            name: "sample".to_string(),
+            name: "mock_name".to_string(),
             age: 20,
         }
     }
