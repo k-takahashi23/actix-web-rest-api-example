@@ -1,8 +1,11 @@
-use actix_web::{get, web, Error, HttpRequest, HttpResponse, Responder};
+use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use domain::repositories::users::UsersRepository;
-use infrastructure::repositories::users::UsersRepositoryImpl;
 use serde::{Serialize};
 use std::future::{Ready, ready};
+
+pub struct FindUserByIdRequest {
+    pub id: String,
+}
 
 #[derive(Serialize)]
 pub struct FindUserByIdResponse {
@@ -20,9 +23,12 @@ impl Responder for FindUserByIdResponse {
     }
 }
 
-#[get("/users/{user_id}")]
-pub async fn find_user_by_id(web::Path(user_id): web::Path<String>) -> impl Responder {
-    let users_repository = UsersRepositoryImpl {};
-    let user = users_repository.find(user_id);
-    FindUserByIdResponse{ id: user.id.clone(), name: user.name.clone(), age: user.age }
+pub struct FindUserByIdUsecase<T: UsersRepository>(pub T);
+
+impl<T: UsersRepository> FindUserByIdUsecase<T> {
+    pub fn handle(&self, request: FindUserByIdRequest) -> FindUserByIdResponse {
+        let users_repository = T::new();
+        let user = users_repository.find(request.id);
+        FindUserByIdResponse{ id: user.id, name: user.name, age: user.age }
+    }
 }
