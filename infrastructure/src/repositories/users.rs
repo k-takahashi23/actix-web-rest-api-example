@@ -4,6 +4,10 @@ pub struct UsersRepositoryImpl {}
 
 // Mock repository
 impl UsersRepository for UsersRepositoryImpl {
+    fn new() -> Self {
+        UsersRepositoryImpl {}
+    }
+
     fn find(&self, id: String) -> User {
         println!("find: user_id = {}", id);
         User {

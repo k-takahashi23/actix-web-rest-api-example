@@ -1,13 +1,12 @@
-use actix_web::{post, web, Error, HttpRequest, HttpResponse, Responder};
-use domain::{entities::user::User, repositories::users::UsersRepository};
-use infrastructure::repositories::users::UsersRepositoryImpl;
-use serde::{Deserialize, Serialize};
+use actix_web::{Error, HttpRequest, HttpResponse, Responder};
+use domain::{repositories::users::UsersRepository, entities::user::User};
 use std::future::{Ready, ready};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct CreateUserRequest {
-    name: String,
-    age: i32
+    pub name: String,
+    pub age: i32
 }
 
 #[derive(Serialize)]
@@ -26,10 +25,13 @@ impl Responder for CreateUserResponse {
     }
 }
 
-#[post("/users")]
-pub async fn create_user(request: web::Json<CreateUserRequest>) -> impl Responder {
-    let users_repository = UsersRepositoryImpl {};
-    let user = User::new(request.name.clone(), request.age );
-    let saved_user = users_repository.save(user);
-    CreateUserResponse{ id: saved_user.id, name: saved_user.name, age: saved_user.age }
+pub struct CreateUserUsecase<T: UsersRepository>(pub T);
+
+impl<T: UsersRepository> CreateUserUsecase<T> {
+    pub fn handle(&self, request: CreateUserRequest) -> CreateUserResponse {
+        let users_repository = T::new();
+        let user = User::new(request.name.clone(), request.age );
+        let saved_user = users_repository.save(user);
+        CreateUserResponse{ id: saved_user.id, name: saved_user.name, age: saved_user.age }
+    }
 }
