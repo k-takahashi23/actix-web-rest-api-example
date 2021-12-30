@@ -20,46 +20,48 @@ mod tests {
         pub UsersRepository {} 
     }
 
-    impl UsersRepository for MockUsersRepository {
-        fn new() -> Self {
-            MockUsersRepository {}
-        }
-    
-        fn find(&self, id: String) -> User {
-            User {
-                id,
-                name: "mock_name_test".to_string(),
-                age: 30,
-            }
-        }
-    
-        fn save(&self, user: User) -> User {
-            user
-        }
-    
-        fn delete(&self, id: String) -> User {
-            User {
-                id,
-                name: "mock_name_test".to_string(),
-                age: 20,
-            }
-        }   
-    }
-
     #[test]
     fn create_user_ok() {
         // Given
+        impl UsersRepository for MockUsersRepository {
+            fn new() -> Self {
+                MockUsersRepository {}
+            }
+        
+            fn find(&self, _id: String) -> User {
+                User {
+                    id: "mock_id".to_string(),
+                    name: "mock_name".to_string(),
+                    age: 20,
+                }
+            }
+        
+            fn save(&self, _user: User) -> User {
+                User {
+                    id: "mock_id".to_string(),
+                    name: "mock_name".to_string(),
+                    age: 20,
+                }
+            }
+        
+            fn delete(&self, _id: String) -> User {
+                User {
+                    id: "mock_id".to_string(),
+                    name: "mock_name_test".to_string(),
+                    age: 20,
+                }
+            }   
+        }
         let mock_repository = MockUsersRepository::new();
         let usecase = CreateUserUsecase(mock_repository);
-        let input = CreateUserInput { name: "mock_name_test".to_string(), age: 30 };
-        let expected = CreateUserOutput { id: "1".to_string(), name: "mock_name_test".to_string(), age: 30 };
+        let input = CreateUserInput { name: "mock_name".to_string(), age: 20 };
+        let expected = CreateUserOutput { id: "mock_id".to_string(), name: "mock_name".to_string(), age: 20 };
 
         // When
         let actual = usecase.handle(input);
 
         // Then
-        // TODO: uuid のモック化
-        // assert_eq!(expected.id, actual.id);
+        assert_eq!(expected.id, actual.id);
         assert_eq!(expected.name, actual.name);
         assert_eq!(expected.age, actual.age);
     }
