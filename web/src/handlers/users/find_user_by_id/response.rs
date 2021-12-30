@@ -1,7 +1,5 @@
-use actix_web::{get, web, Error, HttpRequest, HttpResponse,Responder};
-use application::usecases::users::find_user_by_id::{input::FindUserByIdInput, usecase::FindUserByIdUsecase, output::FindUserByIdOutput};
-use domain::repositories::users::UsersRepository;
-use infrastructure::repositories::users::UsersRepositoryImpl;
+use actix_web::{Error, HttpRequest, HttpResponse,Responder};
+use application::usecases::users::find_user_by_id::{output::FindUserByIdOutput};
 use std::future::{Ready, ready};
 use serde::{Serialize};
 
@@ -25,12 +23,4 @@ impl From<FindUserByIdOutput> for FindUserByIdResponse {
     fn from(from: FindUserByIdOutput) -> FindUserByIdResponse {
         FindUserByIdResponse { id: from.id.clone(), name: from.name.clone(), age: from.age }
     }
-}
-
-#[get("/users/{user_id}")]
-pub async fn find_user_by_id(web::Path(user_id): web::Path<String>) -> impl Responder {
-    let repository = UsersRepositoryImpl::new();
-    let usecase = FindUserByIdUsecase(repository);
-    let output = usecase.handle(FindUserByIdInput { id: user_id });
-    FindUserByIdResponse::from(output)
 }
