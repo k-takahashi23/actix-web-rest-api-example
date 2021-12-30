@@ -11,11 +11,14 @@ impl<T: UsersRepository> FindUserByIdUsecase<T> {
 
 #[cfg(test)]
 mod tests {
+    use mockall::*;
     use domain::{repositories::users::UsersRepository, entities::user::User};
     use crate::usecases::users::find_user_by_id::{usecase::FindUserByIdUsecase, input::FindUserByIdInput, output::FindUserByIdOutput};
 
-    // TODO: Mock ライブラリ使う
-    pub struct MockUsersRepository {}
+    mock! {
+        pub UsersRepository {} 
+    }
+
     impl UsersRepository for MockUsersRepository {
         fn new() -> Self {
             MockUsersRepository {}
@@ -45,8 +48,8 @@ mod tests {
     #[test]
     fn find_user_by_id_ok() {
         // Given
-        let repository = MockUsersRepository::new();
-        let usecase = FindUserByIdUsecase(repository);
+        let mock_repository = MockUsersRepository::new();
+        let usecase = FindUserByIdUsecase(mock_repository);
         let input = FindUserByIdInput { id: "1".to_string() };
         let expected = FindUserByIdOutput { id: "1".to_string(), name: "mock_name_test".to_string(), age: 30 };
 

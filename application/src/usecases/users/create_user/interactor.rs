@@ -12,11 +12,14 @@ impl<T: UsersRepository> CreateUserUsecase<T> {
 
 #[cfg(test)]
 mod tests {
-    use domain::{repositories::users::UsersRepository, entities::user::User};
+    use mockall::*;
+    use domain::{entities::user::User, repositories::users::UsersRepository};
     use crate::usecases::users::create_user::{usecase::CreateUserUsecase, input::CreateUserInput, output::CreateUserOutput};
 
-    // TODO: Mock ライブラリ使う
-    pub struct MockUsersRepository {}
+    mock! {
+        pub UsersRepository {} 
+    }
+
     impl UsersRepository for MockUsersRepository {
         fn new() -> Self {
             MockUsersRepository {}
@@ -46,8 +49,8 @@ mod tests {
     #[test]
     fn create_user_ok() {
         // Given
-        let repository = MockUsersRepository::new();
-        let usecase = CreateUserUsecase(repository);
+        let mock_repository = MockUsersRepository::new();
+        let usecase = CreateUserUsecase(mock_repository);
         let input = CreateUserInput { name: "mock_name_test".to_string(), age: 30 };
         let expected = CreateUserOutput { id: "1".to_string(), name: "mock_name_test".to_string(), age: 30 };
 
